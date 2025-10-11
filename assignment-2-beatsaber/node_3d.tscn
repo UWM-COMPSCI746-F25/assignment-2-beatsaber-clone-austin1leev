@@ -1,38 +1,18 @@
-[gd_scene load_steps=6 format=3 uid="uid://c3wuyn0xdeltp"]
+[gd_scene load_steps=2 format=3 uid="uid://c3wuyn0xdeltp"]
 
-[ext_resource type="Material" uid="uid://b51i6fqr0x5gy" path="res://materials/redbox.tres" id="1_a0tk4"]
-[ext_resource type="Script" uid="uid://tj3y7tlgx4au" path="res://scripts/Charactercontroller.gd" id="1_a202f"]
-[ext_resource type="Material" uid="uid://cgoi5n61pd6lt" path="res://materials/green.tres" id="2_r3fl7"]
-
-[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_4xowi"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_a0tk4"]
-size = Vector3(100, 0.1, 1001)
+[sub_resource type="Environment" id="Environment_4xowi"]
 
 [node name="Node3D" type="Node3D"]
 
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+
+[node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="LeftHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"left_hand"
+
+[node name="RightHand" type="XRController3D" parent="XROrigin3D"]
+tracker = &"right_hand"
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-camera_attributes = SubResource("CameraAttributesPractical_4xowi")
-
-[node name="CSGBox3D" type="CSGBox3D" parent="WorldEnvironment"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.50852, 9.50189)
-material_override = ExtResource("1_a0tk4")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
-transform = Transform3D(1, 0, 0, 0, -0.935961, 0.352103, 0, -0.352103, -0.935961, 0, 7.26554, -2.57283)
-
-[node name="StaticBody3D" type="StaticBody3D" parent="WorldEnvironment"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
-
-[node name="Floor" type="CSGBox3D" parent="WorldEnvironment/StaticBody3D"]
-material_override = ExtResource("2_r3fl7")
-size = Vector3(100, 0.1, 100)
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="WorldEnvironment/StaticBody3D"]
-shape = SubResource("BoxShape3D_a0tk4")
-
-[node name="Character" type="Node3D" parent="."]
-script = ExtResource("1_a202f")
-
-[node name="Camera3D" type="Camera3D" parent="Character"]
-transform = Transform3D(-0.991484, 0, -0.130232, 0, 1, 0, 0.130232, 0, -0.991484, 0, 1.6, 0)
+environment = SubResource("Environment_4xowi")
