@@ -2,8 +2,9 @@ extends XROrigin3D
 
 # VARIABLES
 var spawn_timer: float = 0.0
-var spawn_interval: float = 1.0  # Spawn every 1 second
-var cube_speed: float = 6.0      # meters per second
+var spawn_interval: float = 0.8  # Spawn every 1 second
+var cube_speed: float = 4.2      # meters per second
+var collision_enabled: bool = true
 @onready var sound_player = $"../AudioStreamPlayer3D"  # Reference player with the AudioStream
 
 func _ready():
@@ -21,6 +22,7 @@ func _process(delta):
 	# Cube spawning and movement
 	spawn_cubes(delta)
 	move_cubes(delta)
+	
 
 func check_controller_hits(controller: XRController3D, sword_color: String):
 	var raycast = controller.get_node("SwordRaycast") as RayCast3D
@@ -53,29 +55,6 @@ func set_lasers_active(active: bool):
 	right_visual.visible = active
 	right_raycast.enabled = active
 
-# CREATE A TEST CUBE
-func create_test_cube():
-	var cube = MeshInstance3D.new()
-	cube.mesh = BoxMesh.new()
-	cube.mesh.size = Vector3(0.3, 0.3, 0.3)
-
-	var collision = CollisionShape3D.new()
-	collision.shape = BoxShape3D.new()
-	collision.shape.size = Vector3(0.3, 0.3, 0.3)
-
-	var static_body = StaticBody3D.new()
-	static_body.add_child(collision)
-	cube.add_child(static_body)
-
-	cube.position = Vector3(0, 1.5, 1.0)  # Straight ahead, chest height
-
-	var material = StandardMaterial3D.new()
-	material.albedo_color = Color.BLUE
-	cube.material_override = material
-
-	static_body.add_to_group("cubes")
-	add_child(cube)
-	print("Test cube created! Swing your BLUE sword at it.")
 
 # SPAWN CUBES OVER TIME
 func spawn_cubes(delta: float):
@@ -102,7 +81,7 @@ func create_flying_cube():
 	cube.position = Vector3(
 		randf_range(-1.0, 1.0),
 		randf_range(1.0, 2.0),
-		10.0
+		-10.0
 	)
 
 	# Random color
@@ -121,11 +100,17 @@ func create_flying_cube():
 func move_cubes(delta: float):
 	for child in get_children():
 		if child is MeshInstance3D and child != $left.get_node("LaserVisual") and child != $right.get_node("LaserVisual"):
-			child.position.z -= cube_speed * delta
-			if child.position.z < -2.0:
+			child.position.z += cube_speed * delta
+			if child.position.z > 2.0:
 				child.queue_free()
 				print("Cube missed!")
 
-# RECENTER HMD
-func _on_openxr_pose_recentered() -> void:
-	XRServer.center_on_hmd(XRServer.RESET_BUT_KEEP_TILT, true)
+func _on_right_button_pressed(name: String) -> void: 
+	if name == "ax_button": 
+		$right.visible = !$right.visible 
+		collision_enabled = !collision_enabled
+		
+func _on_left_button_pressed(name: String) -> void: 
+	if name == "ax_button": 
+		$left.visible = !$left.visible
+		collision_enabled = !collision_enabled

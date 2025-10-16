@@ -8,5 +8,12 @@ func _ready():
 		get_viewport().use_xr = true
 		# Optional: disable vsync for VR
 		DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+	if xr_interface.has_signal("pose_recentered"):
+		xr_interface.connect("pose_recentered", _on_openxr_pose_recentered)
 	else:
 		print("OpenXR not initialized, check headset connection")
+
+# RECENTER HMD
+func _on_openxr_pose_recentered() -> void:
+	XRServer.center_on_hmd(XRServer.RESET_BUT_KEEP_TILT, true)
+	emit_signal("pose_recentered")

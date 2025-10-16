@@ -63,3 +63,6 @@ transform = Transform3D(1, 0, 0, 0, 0.894381, 0.447306, 0, -0.447306, 0.894381, 
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
 stream = ExtResource("4_r3fl7")
+
+[connection signal="button_pressed" from="XROrigin3D/right" to="XROrigin3D" method="_on_right_button_pressed"]
+[connection signal="button_pressed" from="XROrigin3D/left" to="XROrigin3D" method="_on_left_button_pressed"]
